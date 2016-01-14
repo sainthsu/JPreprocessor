@@ -1,4 +1,4 @@
-group 'org.flakor'
+group 'org.flakor.jpp'
 version '0.1.0'
 
 apply plugin: 'groovy'
@@ -25,8 +25,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
     compile gradleApi()
-    //compile 'org.codehaus.groovy:groovy-all:2.3.11'
-    compile localGroovy()
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
