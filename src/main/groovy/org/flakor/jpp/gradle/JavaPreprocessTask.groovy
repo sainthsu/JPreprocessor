@@ -12,17 +12,13 @@ import org.gradle.api.tasks.TaskAction
  * javaPreprocess task
  */
 class JavaPreprocessTask extends DefaultTask {
-    static final String TASK_NAME = 'javaPreprocess'
+    static final String NAME = 'javaPreprocess'
     static final String GROUP = 'build'
     static final String DESCRIPTION = 'Preprocess macros in java source code'
 
     private List<Define> defines;
 
-    @Input
     String baseDir
-
-    @Input
-    String srcDir
 
     @Input
     @Optional
@@ -32,6 +28,10 @@ class JavaPreprocessTask extends DefaultTask {
     @Optional
     String encode
 
+    @Input
+    @Optional
+    String defineFile
+
     FileTree sourceTree;
     private MacrosParser parser;
 
@@ -40,15 +40,13 @@ class JavaPreprocessTask extends DefaultTask {
         group = GROUP
         description = DESCRIPTION
     }
+
     @TaskAction
     void javaPreprocess() {
         logger.info("Gradle jPreprocessor Plugin version: $pluginVersion")
         parser = new MacrosParser()
-        parserSrc();
-    }
-
-    void setBaseDir(String baseDir) {
-        this.baseDir = baseDir
+        parseDefine()
+        parseSrc()
     }
 
     void setSrcDir(String srcDir) {
@@ -60,15 +58,42 @@ class JavaPreprocessTask extends DefaultTask {
     }
 
     void setSourceTree(NamedDomainObjectContainer<JPPSourceSet> sourceSetsContainer) {
-        def sourceSet = sourceSetsContainer.findByName("main");
+        def sourceSet = sourceSetsContainer.findByName("main")
         sourceTree = sourceSet.allSource as FileTree
-        baseDir = sourceSet.root()
+        baseDir = project.absoluteProjectPath()
+
+    }
+
+    void parseDefine() {
+        if (!defineFile) return
+
+        if (defines == null) {
+            defines = new ArrayList<Define>()
+        }
+        File file = new File(defineFile)
+        file.eachLine { line ->
+            def l = line.trim()
+            int i
+            if (l.length() > 0 ){
+                i = l.lastIndexOf("=")
+                def n = l.substring(0, i).trim()
+                def v = l.substring(i + 1).trim()
+                def d = new Define(n,v)
+                defines.add(d)
+            }
+        }
     }
 
     private int parseSrc() {
         sourceTree.each {
-            if (it.isDirectory()) {
-
+            if (it.isFile()) {
+                if (!it.parentFile.exists()) {
+                    it.parentFile.mkdirs()
+                }
+                String relativePath = it.absolutePath - project.absoluteProjectPath()
+                String absolutePath = buildDir + relativePath
+                File buildFile = new File(absolutePath)
+                buildFile.createNewFile()
             }
         }
 
@@ -164,6 +189,11 @@ class JavaPreprocessTask extends DefaultTask {
     class Define {
         private String name;
         private String value;
+
+        Define(String n,String v) {
+            name = n
+            value = v
+        }
 
         void setName(String name) {
             this.name = name

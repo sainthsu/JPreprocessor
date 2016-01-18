@@ -34,17 +34,19 @@ class JPreprocessorPlugin implements Plugin<Project> {
                 javaPreprocess:preprocessTask,
                 projectsEvaluated: { Gradle gradle ->
                     preprocessTask.with {
-                        baseDir = extension.baseDir
-                        srcDir = extension.srcDir
                         destDir = extension.destDir
                         encode = extension.encode
-                        if (extension.defineFile) {
-                            File file = new File(extension.defineFile);
+                        defineFile = extension.defineFile
+                        List<JavaPreprocessTask.Define> defines = new ArrayList<JavaPreprocessTask.Define>()
+                        extension.defines.each {k,v->
+                            defines.add(new JavaPreprocessTask.Define(k,v))
                         }
+                        sourceTree = extension.sourceSetsContainer.getByName("main").allSource.asFileTree
                     }
                 }
         ] as BuildAdapter
 
         project.gradle.addBuildListener(projectAdapter)
     }
+
 }
