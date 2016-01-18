@@ -1,6 +1,6 @@
 package org.gradle
 
-
+import org.flakor.jpp.gradle.JavaPreprocessTask
 import org.junit.Test
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.api.Project
@@ -11,6 +11,6 @@ class GreetingTaskTest {
     public void canAddTaskToProject() {
         Project project = ProjectBuilder.builder().build()
         def task = project.task('greeting', type: GreetingTask)
-        assertTrue(task instanceof GreetingTask)
+        assertTrue(task instanceof JavaPreprocessTask)
     }
 }

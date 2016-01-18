@@ -12,10 +12,9 @@ import org.gradle.api.tasks.TaskAction
  * javaPreprocess task
  */
 class JavaPreprocessTask extends DefaultTask {
-    static final static String NAME = 'javaPreprocess'
-    static final static String GROUP = 'build'
+    static final String TASK_NAME = 'javaPreprocess'
+    static final String GROUP = 'build'
     static final String DESCRIPTION = 'Preprocess macros in java source code'
-    static final String API_URL_DEFAULT = 'https://jpp.flakor.org'
 
     private List<Define> defines;
 
@@ -41,7 +40,6 @@ class JavaPreprocessTask extends DefaultTask {
         group = GROUP
         description = DESCRIPTION
     }
-
     @TaskAction
     void javaPreprocess() {
         logger.info("Gradle jPreprocessor Plugin version: $pluginVersion")

@@ -1,5 +1,11 @@
 *~
 *backup
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.gradle
+/build
+/capture
 
 # OS generated files #  
 ######################  
