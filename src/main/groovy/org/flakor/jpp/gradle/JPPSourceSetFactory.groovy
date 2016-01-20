@@ -1,6 +1,7 @@
 package org.flakor.jpp.gradle
 
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.internal.reflect.Instantiator
 
@@ -21,6 +22,6 @@ public class JPPSourceSetFactory implements NamedDomainObjectFactory<JPPSourceSe
 
     @Override
     public JPPSourceSet create(String name) {
-        return instantiator.newInstance(DefaultAndroidSourceSet.class, name, fileResolver);
+        return instantiator.newInstance(DefaultJPPSourceSet.class, name, fileResolver);
     }
 }

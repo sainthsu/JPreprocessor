@@ -235,7 +235,7 @@ public strictfp class ExpressionParser {
 
     private void setField(Vector<String> sepExp) {
         int i = 0
-        for (size = sepExp.size(); i < size; i++) {
+        for (int size = sepExp.size(); i < size; i++) {
             String value = fieldMap.get(sepExp.get(i));
             if (value != null) {
                 sepExp.setElementAt(value, i);
@@ -259,7 +259,7 @@ public strictfp class ExpressionParser {
             }
         }
         int i = 0;
-        for (size = expList.size(); i < size; i++) {
+        for (int size = expList.size(); i < size; i++) {
             elementI = expList.get(i);
             if (elementI.equals(leftBracket)) {
                 bracketCounter++;

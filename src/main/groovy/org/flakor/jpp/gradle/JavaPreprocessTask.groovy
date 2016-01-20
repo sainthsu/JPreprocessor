@@ -6,6 +6,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.FileUtils
 
 
 /**
@@ -15,8 +16,9 @@ class JavaPreprocessTask extends DefaultTask {
     static final String NAME = 'javaPreprocess'
     static final String GROUP = 'build'
     static final String DESCRIPTION = 'Preprocess macros in java source code'
+    static final String PLUGIN_VERSION = '0.1.0'
 
-    private List<Define> defines;
+    List<Define> defines;
 
     String baseDir
 
@@ -43,7 +45,7 @@ class JavaPreprocessTask extends DefaultTask {
 
     @TaskAction
     void javaPreprocess() {
-        logger.info("Gradle jPreprocessor Plugin version: $pluginVersion")
+        logger.info('Gradle jPreprocessor Plugin version: ' + PLUGIN_VERSION)
         parser = new MacrosParser()
         parseDefine()
         parseSrc()
@@ -53,15 +55,14 @@ class JavaPreprocessTask extends DefaultTask {
         this.srcDir = srcDir
     }
 
-    void setBuildDir(String buildDir) {
-        this.buildDir = buildDir
+    void setDestDir(String buildDir) {
+        this.destDir = baseDir + File.separator + buildDir
     }
 
     void setSourceTree(NamedDomainObjectContainer<JPPSourceSet> sourceSetsContainer) {
         def sourceSet = sourceSetsContainer.findByName("main")
-        sourceTree = sourceSet.allSource as FileTree
-        baseDir = project.absoluteProjectPath()
-
+        sourceTree = sourceSet.allJava as FileTree
+        baseDir = project.rootDir.absolutePath
     }
 
     void parseDefine() {
@@ -85,73 +86,27 @@ class JavaPreprocessTask extends DefaultTask {
     }
 
     private int parseSrc() {
+        int num = 0
+        if (!destDir) {
+            destDir = baseDir + File.separator + 'dest'
+        }
+        println 'baseDir:' + baseDir
+        println 'destDir:' + destDir
         sourceTree.each {
-            if (it.isFile()) {
-                if (!it.parentFile.exists()) {
-                    it.parentFile.mkdirs()
-                }
-                String relativePath = it.absolutePath - project.absoluteProjectPath()
-                String absolutePath = buildDir + relativePath
+            if (it.isFile() && it.getName().endsWith(".java")) {
+                println 'current file:' + it.absolutePath
+                String relativePath = it.absolutePath - baseDir
+                String absolutePath = destDir + relativePath
                 File buildFile = new File(absolutePath)
+                if (!buildFile.parentFile.exists()) {
+                    buildFile.parentFile.mkdirs()
+                }
                 buildFile.createNewFile()
+                copyFile(it,buildFile)
+                num++
             }
         }
-
-        for (String dir : srcDir) {
-            if (dir != null && buildDir != null) {
-                String srcDirStr = baseDir.getPath() + File.separatorChar + dir;
-                String buildDirStr = baseDir.getPath() + File.separatorChar + buildDir;
-                File[] srcFileList = listFile(new File(srcDirStr), "java");
-                File defineFile = new File(srcDirStr + File.separatorChar + ".define");
-                if (defineFile.exists()) {
-                    File[] fileList = new File[srcFileList.length + 1];
-                    fileList[0] = defineFile;
-                    System.arraycopy(srcFileList, 0, fileList, 1, srcFileList.length);
-                    srcFileList = fileList;
-                }
-
-                try {
-                    for (int i = 0; i < srcFileList.length; i++) {
-                        String srcFileStr = srcFileList[i].getPath();
-                        File buildFile = new File (buildDirStr
-                                + srcFileStr.substring(srcDirStr.length()));
-                        if (!buildFile.getParentFile().exists()) {
-                            buildFile.getParentFile().mkdirs();
-                        }
-                        if (buildFile.exists()) {
-                            buildFile.delete();
-                        }
-                        buildFile.createNewFile();
-                        copyFile(srcFileList[i], buildFile);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return srcFileList.length;
-            }
-        }
-        return 0;
-    }
-
-    private File[] listFile(File folder, String ext) {
-        if (folder.isDirectory()) {
-            File[] children = folder.listFiles();
-            Vector<File> fileList = new Vector<File>();
-            for (int i = 0; i < children.length; i++) {
-                if (children[i].isDirectory()) {
-                    File[] childList = listFile(children[i], ext);
-                    for (int j = 0; j < childList.length; j++) {
-                        fileList.add(childList[j]);
-                    }
-                } else if (children[i].getName().endsWith("." + ext)) {
-                    fileList.add(children[i]);
-                }
-            }
-            File[] res = new File[fileList.size()];
-            fileList.copyInto(res);
-            return res;
-        }
-        return new File[0];
+        return num
     }
 
     private void copyFile(File srcFile, File destFile) {
@@ -183,24 +138,6 @@ class JavaPreprocessTask extends DefaultTask {
                 System.err.println("Line Number: " + lineCount + "\n");
                 ex.printStackTrace();
             }
-        }
-    }
-
-    class Define {
-        private String name;
-        private String value;
-
-        Define(String n,String v) {
-            name = n
-            value = v
-        }
-
-        void setName(String name) {
-            this.name = name
-        }
-
-        void setValue(String value) {
-            this.value = value
         }
     }
 }

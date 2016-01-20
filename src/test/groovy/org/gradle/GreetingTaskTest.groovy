@@ -10,7 +10,7 @@ class GreetingTaskTest {
     @Test
     public void canAddTaskToProject() {
         Project project = ProjectBuilder.builder().build()
-        def task = project.task('greeting', type: GreetingTask)
+        def task = project.task('javaPreprocess', type: JavaPreprocessTask)
         assertTrue(task instanceof JavaPreprocessTask)
     }
 }

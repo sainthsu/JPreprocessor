@@ -1,0 +1,48 @@
+group 'org.flakor.jpp.test'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        flatDir  {
+           dirs  "$rootDir/../build/libs"
+        }
+    }
+    dependencies {
+        classpath 'org.flakor.jpp:JPreprocessor:0.1.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.flakor.jpp'
+
+jpp {
+    destDir = 'dest'
+    defines {
+        sdk_debugable = false
+    }
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java']
+            }
+        }
+    }
+}
+
+sourceCompatibility = 1.5
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

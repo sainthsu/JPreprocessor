@@ -10,7 +10,7 @@ class GreetingPluginTest {
     @Test
     public void greeterPluginAddsGreetingTaskToProject() {
         Project project = ProjectBuilder.builder().build()
-        project.pluginManager.apply 'org.samples.greeting'
+        project.plugins.apply 'gradle-jpp-plugin'
 
         assertTrue(project.tasks.hello instanceof JavaPreprocessTask)
     }

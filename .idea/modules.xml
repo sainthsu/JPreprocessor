@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JPreprocessor.iml" filepath="$PROJECT_DIR$/JPreprocessor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jpptest/jpptest.iml" filepath="$PROJECT_DIR$/jpptest/jpptest.iml" />
     </modules>
   </component>
 </project>

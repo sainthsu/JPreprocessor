@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
  * a extension for JPP plugin
  */
 class JPPExtension {
-    private ConcurrentHashMap<String,String> defines
+    ConcurrentHashMap<String,String> defines
     Project project
 
     String defineFile
@@ -28,6 +28,7 @@ class JPPExtension {
     JPPExtension(ProjectInternal project, Instantiator instantiator) {
         this.project = project
         sourceSetsContainer = project.container(JPPSourceSet,new JPPSourceSetFactory(instantiator, project.fileResolver))
+        defines = new ConcurrentHashMap<>()
     }
 
     String getDefineFile() {
