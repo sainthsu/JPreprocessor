@@ -46,8 +46,8 @@ class JavaPreprocessTask extends DefaultTask {
     @TaskAction
     void javaPreprocess() {
         logger.info('Gradle jPreprocessor Plugin version: ' + PLUGIN_VERSION)
-        parser = new MacrosParser()
         parseDefine()
+        parser = new MacrosParser(defines)
         parseSrc()
     }
 
@@ -72,6 +72,10 @@ class JavaPreprocessTask extends DefaultTask {
             defines = new ArrayList<Define>()
         }
         File file = new File(defineFile)
+        if (!file.exists()) {
+            throw FileNotFoundException
+        }
+
         file.eachLine { line ->
             def l = line.trim()
             int i
@@ -101,24 +105,31 @@ class JavaPreprocessTask extends DefaultTask {
                 if (!buildFile.parentFile.exists()) {
                     buildFile.parentFile.mkdirs()
                 }
+                if (buildFile.exists()) {
+                    buildFile.delete()
+                }
                 buildFile.createNewFile()
-                copyFile(it,buildFile)
+                owner.copyFile(it,buildFile)
                 num++
             }
         }
+
         return num
     }
 
-    private void copyFile(File srcFile, File destFile) {
+    public void copyFile(File srcFile, File destFile) {
+        if(encode == null || encode.size() == 0) {
+            encode = 'UTF-8'
+        }
         if (srcFile != null && destFile != null
                 && srcFile.exists() && destFile.exists()
                 && srcFile.isFile() && destFile.isFile()) {
             int lineCount = 0;
             String line = null;
             try {
-                InputStreamReader isr = new InputStreamReader(new FileInputStream(srcFile), "UTF-8");
+                InputStreamReader isr = new InputStreamReader(new FileInputStream(srcFile), encode);
                 BufferedReader br = new BufferedReader(isr);
-                OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(destFile), "UTF-8");
+                OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(destFile), encode);
                 BufferedWriter bw = new BufferedWriter(osw);
                 line = br.readLine();
                 while (line != null) {

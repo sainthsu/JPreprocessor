@@ -1,7 +1,8 @@
 package org.flakor.jpp.gradle
 
 /**
- * Created by xusq on 2016/1/15.
+ * Created by Steve Hsu on 2016/1/15.
+ * macros parser to parse a line
  */
 class MacrosParser {
     private Vector<boolean[]> ifList;
@@ -11,8 +12,11 @@ class MacrosParser {
     private File logFileBuf;
     private FileWriter logger;
 
-    public MacrosParser() {
+    public MacrosParser(List<Define> definesList) {
         parser = new ExpressionParser();
+        definesList.each {it ->
+            parser.newField(it.name,it.value)
+        }
         ifList = new Vector<boolean[]>();
         codeEnable = true;
     }
@@ -43,8 +47,8 @@ class MacrosParser {
 
     private String parse(String line) throws Exception {
         String macrosLine = line.trim();
-        int marcroIndex = line.indexOf(macrosLine);
-        String prefix = line.substring(0, marcroIndex);
+        int macroIndex = line.indexOf(macrosLine);
+        String prefix = line.substring(0, macroIndex);
         if (macrosLine.startsWith("//#ifdef")) { //#ifdef <fieldName>
             boolean[] newLevel = [codeEnable, normalIf];
             ifList.add(newLevel);

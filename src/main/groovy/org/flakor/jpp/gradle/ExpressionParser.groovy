@@ -1,7 +1,8 @@
 package org.flakor.jpp.gradle
 
 /**
- * Created by xusq on 2016/1/15.
+ * Created by Steve Hsu on 2016/1/15.
+ * ExpressionParser to parse an expression
  */
 public strictfp class ExpressionParser {
     private String[] funcList = [
@@ -35,13 +36,13 @@ public strictfp class ExpressionParser {
 
     public String getField(String key) {
         String value = null;
-        if (key.equals("pcp.version")) {
-            value = "1.0.0";
-        } else if (key.equals("pcp.author")) {
-            value = "Alex Yu";
-        } else if (key.equals("pcp.email")) {
-            value = "alexyu.yxj@gmail.com";
-        } else if (key.equals("pcp.date")) {
+        if (key.equals("jpp.version")) {
+            value = JavaPreprocessTask.PLUGIN_VERSION;
+        } else if (key.equals("jpp.author")) {
+            value = "Steve Hsu";
+        } else if (key.equals("jpp.email")) {
+            value = "steve@kunkua.com";
+        } else if (key.equals("jpp.date")) {
             Calendar cal = Calendar.getInstance();
             String year = String.valueOf(cal.get(Calendar.YEAR));
             String month = String.valueOf(cal.get(Calendar.MONTH) + 1);
@@ -53,10 +54,10 @@ public strictfp class ExpressionParser {
                 day = "0" + day;
             }
             value = year + '-' + month + '-' + day;
-        } else if (key.equals("pcp.week")) {
+        } else if (key.equals("jpp.week")) {
             Calendar cal = Calendar.getInstance();
             value = String.valueOf(cal.get(Calendar.DAY_OF_WEEK) - 1);
-        } else if (key.equals("pcp.time")) {
+        } else if (key.equals("jpp.time")) {
             Calendar cal = Calendar.getInstance();
             String hour = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
             if (hour.length() < 2) {
@@ -71,34 +72,34 @@ public strictfp class ExpressionParser {
                 second = "0" + second;
             }
             value = hour + ":" + minute + ":" + second;
-        } else if (key.equals("pcp.rndb")) {
+        } else if (key.equals("jpp.rndb")) {
             Random rnd = new Random(System.currentTimeMillis());
             value = String.valueOf(rnd.nextInt() % Byte.MAX_VALUE);
-        } else if (key.equals("pcp.rnds")) {
+        } else if (key.equals("jpp.rnds")) {
             Random rnd = new Random(System.currentTimeMillis());
             value = String.valueOf(rnd.nextInt() % Short.MAX_VALUE);
-        } else if (key.equals("pcp.rndi")) {
+        } else if (key.equals("jpp.rndi")) {
             Random rnd = new Random(System.currentTimeMillis());
             value = String.valueOf(rnd.nextInt());
-        } else if (key.equals("pcp.rndl")) {
+        } else if (key.equals("jpp.rndl")) {
             Random rnd = new Random(System.currentTimeMillis());
             value = String.valueOf(rnd.nextLong());
-        } else if (key.equals("pcp.rndf")) {
+        } else if (key.equals("jpp.rndf")) {
             Random rnd = new Random(System.currentTimeMillis());
             value = String.valueOf(rnd.nextFloat());
-        } else if (key.equals("pcp.rndd")) {
+        } else if (key.equals("jpp.rndd")) {
             Random rnd = new Random(System.currentTimeMillis());
             value = String.valueOf(rnd.nextDouble());
-        } else if (key.equals("pcp.rnd")) {
+        } else if (key.equals("jpp.rnd")) {
             Random rnd = new Random(System.currentTimeMillis());
             int type = Math.abs(rnd.nextInt()) % 6;
             switch (type) {
-                case 0: value = getField("pcp.rndb"); break;
-                case 1: value = getField("pcp.rnds"); break;
-                case 2: value = getField("pcp.rndi"); break;
-                case 3: value = getField("pcp.rndl"); break;
-                case 4: value = getField("pcp.rndf"); break;
-                case 5: value = getField("pcp.rndd"); break;
+                case 0: value = getField("jpp.rndb"); break;
+                case 1: value = getField("jpp.rnds"); break;
+                case 2: value = getField("jpp.rndi"); break;
+                case 3: value = getField("jpp.rndl"); break;
+                case 4: value = getField("jpp.rndf"); break;
+                case 5: value = getField("jpp.rndd"); break;
                 default: value = "0"; break;
             }
         } else {

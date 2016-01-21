@@ -13,10 +13,11 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'org.flakor.jpp'
+apply plugin: 'jpp'
 
 jpp {
     destDir = 'dest'
+    defineFile = 'defines.jpp'
     defines {
         sdk_debugable = false
     }

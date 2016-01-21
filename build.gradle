@@ -1,12 +1,19 @@
 group 'org.flakor.jpp'
 version '0.1.0'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    }
+}
+
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'groovy'
 apply plugin: 'java'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
-
-defaultTasks 'clean','jar'
 
 sourceSets {
     main {
@@ -17,7 +24,6 @@ sourceSets {
     }
 }
 
-
 repositories {
     jcenter()
 }
@@ -26,6 +32,11 @@ dependencies {
 	compile "org.codehaus.groovy:groovy-all:2.3.11"
     compile gradleApi()
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+compileGroovy {
+    sourceCompatibility = '1.6'
+    targetCompatibility = '1.6'
 }
 
 def javaApiUrl = 'http://docs.oracle.com/javase/1.7.0/docs/api/'
@@ -44,8 +55,21 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-artifacts {
-    archives jar
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "steve"
+            name "Steve Hsu"
+            email "steve@kunkua.com"
+        }
+    }
 }
 
 task createReleasePropertiesFile(type:Exec) {
@@ -53,6 +77,50 @@ task createReleasePropertiesFile(type:Exec) {
     println 'Creating $fileName'
     String fileContent = "version=$version"
     (new File("$rootDir/src/main/resources/$fileName")).write(fileContent)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId 'org.flakor.jpp'
+            artifactId 'gradle-jpp-plugin'
+            version '0.1.0'
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'A gradle plugin for preprocess java source code with macros')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['mavenJava']
+    pkg {
+        repo = 'maven'
+        name = 'gradle-jpp-plugin'
+        userOrg = user
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sainthsu/gradle-jpp-plugin.git'
+        labels = ['jpp', 'jPreprocessor', 'gradle-jpp-plugin']
+        publicDownloadNumbers = true
+        version {
+            name = '0.1.0-Final'
+            desc = 'Gradle JPP Plugin 0.1.0 final'
+            vcsTag = '0.1.0'
+            attributes = ['gradle-plugin': 'jpp:org.flakor.jpp:org.flakor.jpp.gradle:jPreprocessor:gradle-jpp-plugin']
+        }
+    }
+}
+
+task install(dependsOn: 'publishMavenJavaPublicationToMavenLocal') << {
+    logger.info "Installing $project.name"
 }
 
 task wrapper(type: Wrapper, description: 'Gradle Wrapper task') {
