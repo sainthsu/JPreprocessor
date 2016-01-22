@@ -3,12 +3,10 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        flatDir  {
-           dirs  "$rootDir/../build/libs"
-        }
+        jcenter()
     }
     dependencies {
-        classpath 'org.flakor.jpp:JPreprocessor:0.1.0'
+        classpath 'org.flakor.jpp:gradle-jpp-plugin:0.1.0'
     }
 }
 
