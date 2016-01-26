@@ -1,5 +1,5 @@
 group 'org.flakor.jpp'
-version '0.1.0'
+version '0.1.1'
 
 buildscript {
     repositories {
@@ -75,7 +75,7 @@ def pomConfig = {
 task createReleasePropertiesFile(type:Exec) {
     String fileName = 'jpp.plugin.release.properties'
     println 'Creating $fileName'
-    String fileContent = "version=$version"
+    String fileContent = "version=0.1.1"
     (new File("$rootDir/src/main/resources/$fileName")).write(fileContent)
 }
 
@@ -87,7 +87,7 @@ publishing {
             artifact javadocJar
             groupId 'org.flakor.jpp'
             artifactId 'gradle-jpp-plugin'
-            version '0.1.0'
+            version '0.1.1'
 
             pom.withXml {
                 def root = asNode()
@@ -111,9 +111,9 @@ bintray {
         labels = ['jpp', 'jPreprocessor', 'gradle-jpp-plugin']
         publicDownloadNumbers = true
         version {
-            name = '0.1.0-Final'
-            desc = 'Gradle JPP Plugin 0.1.0 final'
-            vcsTag = '0.1.0'
+            name = '0.1.1'
+            desc = 'Gradle JPP Plugin 0.1.1'
+            vcsTag = '0.1.1'
             attributes = ['gradle-plugin': 'jpp:org.flakor.jpp:org.flakor.jpp.gradle:jPreprocessor:gradle-jpp-plugin']
         }
     }

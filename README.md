@@ -7,7 +7,7 @@ Please follow the below steps to add the Gradle JPP Plugin to your Gradle build 
 
 #### Step 1: Apply the plugin to your Gradle build script
 
-To apply the plugin, please add one of the following snippets to your `build.gradle` file:
+To apply the plugin, please add the following snippets to your `build.gradle` file:
 
 ```groovy
 buildscript {
@@ -42,16 +42,53 @@ jpp {
     ...
 }
 ```
-######Mandatory parameters:
-1. destDir --- destination directory your code files 
+###### Mandatory parameters:
+1. destDir --- destination directory your code files locate
 2. sourceSets --- same as java plugin's sourceSets
 
-######Optional parameters
+###### Optional parameters
 1. defines  --- macros you defined
 2. defineFile --- a file holded macros
 3. encode --- source file encoding (default utf-8)
+4. baseDir --- base directory your code files locate
 
-#### Step 3: Run the build
+#### Step 3: Set your final sourceSets
+
+To make your processed files as source files,you must set the final directory
+which is **dest** property plus **SourceSets srcDirs** in jpp closure to Java
+plugin or Android plugin SourceSets.
+
+###### Java Plugin
+
+```
+sourceSets {
+    main {
+        java {
+            srcDirs = ['dest/src/main/java'] //set dest source dir
+        }
+    }
+}
+
+```
+
+###### Android Plugin
+
+```
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    sourceSets {
+        main {
+            java.srcDirs = ['dest/src/main/java'] //set dest source dir
+        }
+    }
+    ...
+}
+
+```
+
+#### Step 4: Run the build
 
 > gradle javaPreprocess
 

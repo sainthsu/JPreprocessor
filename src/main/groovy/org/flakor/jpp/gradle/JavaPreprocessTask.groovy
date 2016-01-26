@@ -8,6 +8,8 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.FileUtils
 
+import java.util.concurrent.ConcurrentHashMap
+
 
 /**
  * javaPreprocess task
@@ -20,6 +22,8 @@ class JavaPreprocessTask extends DefaultTask {
 
     List<Define> defines;
 
+    @Input
+    @Optional
     String baseDir
 
     @Input
@@ -34,7 +38,7 @@ class JavaPreprocessTask extends DefaultTask {
     @Optional
     String defineFile
 
-    FileTree sourceTree;
+    ConcurrentHashMap<String,FileTree> sourceMap = ConcurrentHashMap.newInstance();
     private MacrosParser parser;
 
     Properties releaseProps
@@ -51,18 +55,26 @@ class JavaPreprocessTask extends DefaultTask {
         parseSrc()
     }
 
-    void setSrcDir(String srcDir) {
-        this.srcDir = srcDir
+    void setBaseDir(String baseDir) {
+        if (baseDir == null || baseDir.length() == 0) return
+        File file = new File(project.projectDir.absolutePath,baseDir)
+        if (file.exists()) {
+            this.baseDir = file.absolutePath
+        }
     }
 
     void setDestDir(String buildDir) {
+        if (buildDir == null || buildDir.length() == 0) return
         this.destDir = baseDir + File.separator + buildDir
     }
 
     void setSourceTree(NamedDomainObjectContainer<JPPSourceSet> sourceSetsContainer) {
-        def sourceSet = sourceSetsContainer.findByName("main")
-        sourceTree = sourceSet.allJava as FileTree
-        baseDir = project.rootDir.absolutePath
+        sourceSetsContainer.each{
+            sourceMap.put(it.name,it.allSource as FileTree)
+        }
+        if (baseDir == null || baseDir.length() == 0) {
+            baseDir = project.projectDir.absolutePath
+        }
     }
 
     void parseDefine() {
@@ -96,11 +108,13 @@ class JavaPreprocessTask extends DefaultTask {
         }
         println 'baseDir:' + baseDir
         println 'destDir:' + destDir
+        FileTree sourceTree = sourceMap.get('main')
         sourceTree.each {
             if (it.isFile() && it.getName().endsWith(".java")) {
-                println 'current file:' + it.absolutePath
                 String relativePath = it.absolutePath - baseDir
                 String absolutePath = destDir + relativePath
+                println 'current file:' + it.absolutePath
+                println 'target file:' + absolutePath
                 File buildFile = new File(absolutePath)
                 if (!buildFile.parentFile.exists()) {
                     buildFile.parentFile.mkdirs()

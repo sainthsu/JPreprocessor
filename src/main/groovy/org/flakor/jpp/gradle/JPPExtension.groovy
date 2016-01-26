@@ -17,6 +17,7 @@ class JPPExtension {
     Project project
 
     String defineFile
+    String baseDir
     String destDir
     String encode
 
@@ -29,6 +30,14 @@ class JPPExtension {
         this.project = project
         sourceSetsContainer = project.container(JPPSourceSet,new JPPSourceSetFactory(instantiator, project.fileResolver))
         defines = new ConcurrentHashMap<>()
+    }
+
+    String getBaseDir() {
+        return baseDir
+    }
+
+    void setBaseDir(String dir) {
+        baseDir = dir
     }
 
     String getDefineFile() {
