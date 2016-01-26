@@ -1,6 +1,6 @@
 # Overview
 
-The Gradle JPP Plugin allows you to preprocess macros in your java source code.
+The Gradle JPP Plugin is a [PrecompileProcessor](https://github.com/alexyuyxj/PrecompileProcessor) gradle porting.It allows you to preprocess macros in your java source code.
 
 # Getting Started Using the Plugin
 Please follow the below steps to add the Gradle JPP Plugin to your Gradle build script.
@@ -94,6 +94,10 @@ android {
 
 **JVM Compatibility:**
 Java 6 and above.
+
+# Document
+
+Chinese Doc you can check at [this PCP Chinese Doc](https://github.com/alexyuyxj/PrecompileProcessor/wiki)
 
 # License
 This plugin is available under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
