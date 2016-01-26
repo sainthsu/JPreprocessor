@@ -15,7 +15,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.flakor.jpp:gradle-jpp-plugin:0.1.0'
+        classpath 'org.flakor.jpp:gradle-jpp-plugin:0.1.1'
     }
 }
 apply plugin: 'jpp'
